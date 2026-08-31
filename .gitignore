@@ -1,0 +1,10 @@
+.DS_Store
+.env
+.env.*
+*.pem
+*.key
+*token*
+auth*.json
+credentials*.json
+__pycache__/
+*.pyc

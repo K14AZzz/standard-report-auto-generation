@@ -1,0 +1,23 @@
+{
+  "default": {
+    "query_caliber": "device",
+    "report_basis": "device",
+    "fallback_calibers": []
+  },
+  "projects": {
+    "火炬之光": {
+      "aliases": ["火炬之光", "火炬"],
+      "project_name": "火炬之光",
+      "query_caliber": "user",
+      "report_basis": "user",
+      "fallback_calibers": ["device"]
+    },
+    "香肠派对": {
+      "aliases": ["香肠派对", "香肠"],
+      "project_name": "香肠派对",
+      "query_caliber": "user",
+      "report_basis": "user",
+      "fallback_calibers": ["device"]
+    }
+  }
+}

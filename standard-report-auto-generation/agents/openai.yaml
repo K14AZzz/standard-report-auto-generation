@@ -1,0 +1,4 @@
+interface:
+  display_name: "标准报表自动生成"
+  short_description: "按项目规则拉数并安全生成、插入和核验飞书周报数据模块"
+  default_prompt: "Use $standard-report-auto-generation to create and verify the newest weekly advertising report module for a specified game project."
