@@ -35,6 +35,19 @@ cp -R standard-report-auto-generation/lark-cli-feishu-workflow ~/.codex/skills/
 4. 确认运行环境可调用 `query_agent_wide_data`，并配置其所需凭证。
 5. 每次任务由用户提供目标飞书表格、子表和基准模板；不要把真实 token 或凭证写入 Skill。
 
+### 常见授权错误：`client secret is invalid`
+
+这表示 CLI 还没有通过应用凭证校验，不是表格权限错误。请确认 App ID 和 App Secret 来自同一个飞书自建应用，Secret 没有被重新生成，且没有把用户 token、占位符或带引号/空格的文本当作 Secret。推荐通过 stdin 重配：
+
+```bash
+printf '%s\n' "$FEISHU_APP_SECRET" | \
+  lark-cli config init --app-id "$FEISHU_APP_ID" --app-secret-stdin --brand feishu
+lark-cli whoami
+lark-cli auth status --json --verify
+```
+
+配置成功后再执行 `lark-cli auth login --domain sheets --no-wait --json`，每次都使用新生成的 device code。不要把 App Secret、access token 或 OAuth 缓存提交到 GitHub；给不同使用者配置时，建议每人使用自己的飞书应用凭证。
+
 ## 默认规则
 
 - 数据接口：`query_agent_wide_data`

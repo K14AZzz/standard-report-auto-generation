@@ -53,6 +53,38 @@ lark-cli sheets +cells-get --url "<spreadsheet-url>" \
 
 For large ranges use `--output-path` and check `complete`, `truncated`, `has_more`, and actual ranges. Identify title, header, data, subtotal/total, and blank rows from content—not row-number patterns alone. Respect merged cells and hidden rows/columns.
 
+## 2a. Troubleshoot `client secret is invalid`
+
+If `lark-cli auth login` returns `device authorization failed: The client secret is invalid`, stop before requesting Sheets authorization. This is an application-credential failure, not a user OAuth or spreadsheet-permission failure.
+
+Check that the App ID and App Secret come from the same Feishu/Lark custom app, that the secret was not regenerated after it was copied, and that the value is not a user token, tenant token, placeholder, or text with extra quotes/whitespace. Prefer stdin so the secret is not placed in shell history:
+
+```bash
+printf '%s\n' "$FEISHU_APP_SECRET" | \
+  lark-cli config init \
+    --app-id "$FEISHU_APP_ID" \
+    --app-secret-stdin \
+    --brand feishu
+```
+
+Use `--brand lark` for Lark tenants. If the existing profile is stale, rerun `lark-cli config init` with the corrected pair (or `config init --new` for a new profile). Never print or commit credentials.
+
+Verify the corrected configuration without exposing secrets:
+
+```bash
+lark-cli whoami
+lark-cli auth status --json --verify
+```
+
+Only then start a fresh device flow; never reuse an expired device code or cached verification URL:
+
+```bash
+lark-cli auth login --domain sheets --no-wait --json
+lark-cli auth login --device-code '<fresh-device-code>'
+```
+
+If the error persists, create/select a valid custom app and enable the required Sheets scopes. Each recipient should use their own app credentials unless a shared app is intentionally managed through secure secret storage.
+
 ## 3. Minimal, typed writes
 
 - Preserve numeric/date/formula types; do not stringify numbers merely to force display.
