@@ -50,11 +50,13 @@ lark-cli whoami
 lark-cli auth status --json --verify
 ```
 
-尚未配置时：
+尚未配置时，先尝试绑定运行环境提供的托管/Codex 飞书应用：
 
 ```bash
-lark-cli config init --new
+lark-cli config bind
 ```
+
+绑定成功后，用户不需要申请或填写 App ID / App Secret，直接进入下面的用户 OAuth 授权。托管应用凭证由运行环境保存，不得复制到 Skill、日志或 GitHub。
 
 如果 Agent 环境已经有飞书凭证来源，优先绑定已有配置：
 
@@ -62,7 +64,7 @@ lark-cli config init --new
 lark-cli config bind
 ```
 
-不要为了同一个用户静默创建第二套应用配置。需要多个环境时使用明确的 `--profile <name>`。
+只有在没有托管凭证、且用户明确选择自建飞书应用时，才使用 `lark-cli config init --new` 或显式 App ID / App Secret。不要为了同一个用户静默创建第二套应用配置。需要多个环境时使用明确的 `--profile <name>`。
 
 ## OAuth 用户授权
 
@@ -111,6 +113,8 @@ lark-cli sheets +csv-get --url '<spreadsheet-url>' --sheet-name '<sheet-name>' -
 只读探测成功即证明当前授权可用；之后才能执行插行、样式或值写入。
 
 ## 常见问题
+
+- `client secret is invalid`：优先检查是否误用了自建应用 profile；正常 Codex 环境先执行 `lark-cli config bind` 恢复托管应用，再用新 device code 授权。只有托管绑定不可用时，才检查自建应用的 App ID / App Secret 是否匹配且未失效。
 
 - `请求不合法`：核对 OAuth 回调、品牌（Feishu/Lark）、profile 和 device code 是否匹配；重新发起登录，不要改 URL。
 - `sheet not found`：`--sheet-name` 必须传真实名称；短链接参数里的 sheet ID 不是 sheet name。

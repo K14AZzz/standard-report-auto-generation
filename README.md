@@ -25,19 +25,20 @@ cp -R standard-report-auto-generation/lark-cli-feishu-workflow ~/.codex/skills/
 
 ## 首次配置
 
-1. 按 `standard-report-auto-generation/references/lark-cli-workflow-setup.md` 安装并配置 `lark-cli`。
-2. 完成飞书 Sheets OAuth 用户授权，并执行 `lark-cli auth status --json --verify` 验证身份。
+1. 按 `standard-report-auto-generation/references/lark-cli-workflow-setup.md` 安装 `lark-cli`。
+2. 优先执行 `lark-cli config bind` 绑定运行环境提供的托管/Codex 飞书应用；绑定成功后不需要申请 App ID 或 App Secret。
+3. 完成飞书 Sheets OAuth 用户授权，并执行 `lark-cli auth status --json --verify` 验证身份。
 3. 在 `standard-report-auto-generation/references/project-rules.json` 中补充项目的：
    - `project_name`
    - `query_caliber`
    - `report_basis`
    - `fallback_calibers`
 4. 确认运行环境可调用 `query_agent_wide_data`，并配置其所需凭证。
-5. 每次任务由用户提供目标飞书表格、子表和基准模板；不要把真实 token 或凭证写入 Skill。
+6. 每次任务由用户提供目标飞书表格、子表和基准模板；不要把真实 token 或凭证写入 Skill。
 
 ### 常见授权错误：`client secret is invalid`
 
-这表示 CLI 还没有通过应用凭证校验，不是表格权限错误。请确认 App ID 和 App Secret 来自同一个飞书自建应用，Secret 没有被重新生成，且没有把用户 token、占位符或带引号/空格的文本当作 Secret。推荐通过 stdin 重配：
+正常的 Codex 托管授权不要求用户申请 App ID / App Secret。先执行 `lark-cli config bind` 恢复托管应用配置，再用新的 device code 授权。只有绑定不可用、且用户明确使用自建应用时，才检查 App ID 和 App Secret 是否匹配、是否失效，以及是否误传了 token、占位符或带引号/空格的文本。自建应用重配示例：
 
 ```bash
 printf '%s\n' "$FEISHU_APP_SECRET" | \
